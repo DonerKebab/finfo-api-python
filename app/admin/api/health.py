@@ -7,7 +7,6 @@ health endpoint
 """
 
 from flask import Blueprint, current_app as app, jsonify
-from flask_swagger import swagger
 from . import route
 
 bp = Blueprint('health', __name__, url_prefix='/health')
