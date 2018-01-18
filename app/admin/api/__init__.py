@@ -8,7 +8,7 @@ from ..core import AdminError, cache, es
 from ..helpers import lookup_url
 from .parsers import MarketRequestParser,DerivativeRequestParser
 from .. import factory
-
+from flasgger import Swagger
 
 def create_app(settings_override=None):
     app = factory.create_app(__name__, __path__, settings_override)
@@ -27,7 +27,10 @@ def create_app(settings_override=None):
     # def set_headers(response):        
     #     response.headers['X-Active-ES-Cluster'] = es.active_cluster
     #     return response
-
+    app.config['SWAGGER'] = {
+    'title': 'Finfo API'
+    }
+    swagger = Swagger(app)
     return app
 
 
@@ -43,9 +46,7 @@ def route(bp, *args, **kwargs):
             if isinstance(rv, tuple):
                 sc = rv[1]
                 rv = rv[0]
-
             return jsonify(dict(data=rv)), sc
-
         return f
 
     return decorator

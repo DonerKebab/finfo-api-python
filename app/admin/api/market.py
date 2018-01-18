@@ -11,10 +11,49 @@ from flask import Blueprint, current_app as app, abort
 from ..core import AdminError, es, cache
 from . import route, auth_required
 
-bp = Blueprint('market', __name__, url_prefix='/market')
+bp = Blueprint('index', __name__, url_prefix='/index')
 
-@route(bp, '/')
+@route(bp, '/securities/vnmarket/intraday')
 def index():
+    """List all market.
+    ---
+    parameters:
+      - name: floorCode
+        in: path
+        type: string
+        required: false
+      - name: tradingDate
+        in: path
+        type: string
+        required: false 
+      - name: page
+        in: path
+        type: integer
+        default: 1
+        required: false
+      - name: limit
+        in: path
+        type: integer
+        default: 2000
+        required: false
+    definitions:
+      market:
+        type: object
+        properties:
+          floorCode:
+            type: string
+          tradingDate:
+            type: string
+          time:
+            type: string
+
+    responses:
+      200:
+        description: A list of market
+        schema:
+          $ref: '#/definitions/market'
+
+    """
     args = {k: v for k, v in app.market_parser.parse_args().iteritems() if v is not None}
     # get filters
     filters = app.market_parser.get_market_filters(args)

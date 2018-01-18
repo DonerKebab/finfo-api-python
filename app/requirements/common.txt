@@ -7,3 +7,4 @@ nose==1.3.7
 raven[flask]
 requests==2.12.4
 pycurl==7.43.0
+flasgger==0.8.0

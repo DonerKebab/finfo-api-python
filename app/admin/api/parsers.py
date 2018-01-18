@@ -16,11 +16,12 @@ class MarketRequestParser(RequestParser):
     def __init__(self, *args, **kwargs):
         super(MarketRequestParser, self).__init__(*args, **kwargs)
 
-        self.add_argument('tradingDate', type=str)  
+        self.add_argument('tradingDate', type=str, default=datetime.datetime.today().strftime('%Y-%m-%d'))  
         self.add_argument('time', type=str)
         self.add_argument('floorCode', type=str)
         self.add_argument('limit', type=int, default=2000)
         self.add_argument('_source', type=str)
+        self.add_argument('page', type=int)
 
     def get_market_filters(self, args):
 
@@ -41,11 +42,12 @@ class DerivativeRequestParser(RequestParser):
         super(DerivativeRequestParser, self).__init__(*args, **kwargs)
 
         self.add_argument('code', type=str)
-        self.add_argument('tradingDate', type=str) 
+        self.add_argument('tradingDate', type=str, default=datetime.datetime.today().strftime('%Y-%m-%d')) 
         self.add_argument('time', type=str)
         self.add_argument('deriCode', type=str)
         self.add_argument('limit', type=int, default=2000)
         self.add_argument('_source', type=str)
+        self.add_argument('page', type=int)
 
     def get_derivative_filters(self, args):
 
