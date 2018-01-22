@@ -9,11 +9,12 @@
 from flask import Blueprint, current_app as app, abort
 
 from ..core import AdminError, es, cache
-from . import route, auth_required
+from . import route, gzipped
 
 bp = Blueprint('trade', __name__, url_prefix='/trade')
 
 @route(bp, '/derivatives/intraday')
+@gzipped
 def index():
     """List all derivative.
     ---

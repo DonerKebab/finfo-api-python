@@ -51,8 +51,6 @@ class ElasticSearch(object):
 
 
     def search(self, *args, **kwargs):
-        # make sure we are connected to ES
-        self.check_cluster()
 
         page = kwargs['body'].pop('page', 1)
         body = current_app.extensions['elasticsearch'] \
@@ -61,35 +59,27 @@ class ElasticSearch(object):
         results = body.get('hits', [])
         results['from'] = kwargs['body'].get('from', -1)
         results['limit'] = kwargs['body'].get('size', -1)
-        results['aggregations'] = body.get('aggregations', {})
         results['page'] = page
 
         return results
 
     def get(self, *args, **kwargs):
-        # make sure we are connected to ES
-        self.check_cluster()
 
         return current_app.extensions['elasticsearch'] \
             .get(index=current_app.config.get('ELASTICSEARCH_INDEX', None), _source=True, *args, **kwargs)
 
     def count(self, *args, **kwargs):
-        # make sure we are connected to ES
-        self.check_cluster()
 
         return current_app.extensions['elasticsearch'] \
             .count(index=current_app.config.get('ELASTICSEARCH_INDEX', None), *args, **kwargs)['count']
 
     def status(self, *args, **kwargs):
-        # make sure we are connected to ES
-        self.check_cluster()
 
         return current_app.extensions['elasticsearch'] \
             .indices.status(index=current_app.config.get('ELASTICSEARCH_INDEX', None), *args, **kwargs)
 
     def filtered_search(self, *args, **kwargs):
-        # make sure we are connected to ES
-        self.check_cluster()
+
 
         doc_type = kwargs.get('doc_type', False)
         query_params = kwargs.get('args', False)

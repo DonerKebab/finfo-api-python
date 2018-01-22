@@ -2,13 +2,17 @@
 from functools import wraps
 import sys
 
-from flask import jsonify, current_app as app, abort
+from flask import jsonify, current_app as app, abort, after_this_request, request
+from flasgger import Swagger
+from cStringIO import StringIO as IO
+import gzip
 
 from ..core import AdminError, cache, es
 from ..helpers import lookup_url
 from .parsers import MarketRequestParser,DerivativeRequestParser
 from .. import factory
-from flasgger import Swagger
+
+
 
 def create_app(settings_override=None):
     app = factory.create_app(__name__, __path__, settings_override)
@@ -23,10 +27,6 @@ def create_app(settings_override=None):
 
     app.url_build_error_handlers.append(external_url_handler)
 
-    # @app.after_request
-    # def set_headers(response):        
-    #     response.headers['X-Active-ES-Cluster'] = es.active_cluster
-    #     return response
     app.config['SWAGGER'] = {
     'title': 'Finfo API'
     }
@@ -79,38 +79,37 @@ def external_url_handler(error, endpoint, values):
     # url_for will use this result, instead of raising BuildError.
     return url
 
-def auth_required(view_function):
-    @wraps(view_function)
-    def decorated_function(*args, **kwargs):
 
-        parsed_args = app.auth_parser.parse_args()
+def gzipped(f):
+    @wraps(f)
+    def view_func(*args, **kwargs):
+        @after_this_request
+        def zipper(response):
+            # accept_encoding = request.headers.get('Accept-Encoding', '')
 
-        token = parsed_args['token']
-        if not token:
-            abort(401)
+            # if 'gzip' not in accept_encoding.lower():
+            #     return response
 
-        # check token already in cache
-        api_cache = cache.get(token)
-        if api_cache:
-            return view_function(*args, **kwargs)
+            response.direct_passthrough = False
 
-        else:
-            try:
-                client = clients.find(token=token, limit=1)
+            if (response.status_code < 200 or
+                response.status_code >= 300 or
+                'Content-Encoding' in response.headers):
+                return response
+            gzip_buffer = IO()
+            gzip_file = gzip.GzipFile(mode='wb', 
+                                      fileobj=gzip_buffer)
+            gzip_file.write(response.data.replace(' ', ''))
+            # gzip_file.write(response.data)
+            gzip_file.close()
 
-            except Exception as e:
-                
-                if app.sentry:
-                    app.sentry.captureMessage('Authentication error, please check if tokens.c52.io is accessible')
-                
-                app.deal_parser.add_argument('country', type=str, default='uk')
-                return view_function(*args, **kwargs)
+            response.data = gzip_buffer.getvalue()
+            response.headers['Content-Encoding'] = 'gzip'
+            response.headers['Vary'] = 'Accept-Encoding'
+            response.headers['Content-Length'] = len(response.data)
 
-            if client:
-                app.deal_parser.add_argument('country', type=str, default=client.country)
-                cache.set(token, client, app.config['CACHE_TIMEOUT'])
-                return view_function(*args, **kwargs)
-            else:
-                abort(401)
+            return response
 
-    return decorated_function
+        return f(*args, **kwargs)
+
+    return view_func

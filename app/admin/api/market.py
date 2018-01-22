@@ -9,11 +9,12 @@
 from flask import Blueprint, current_app as app, abort
 
 from ..core import AdminError, es, cache
-from . import route, auth_required
+from . import route, gzipped
 
 bp = Blueprint('index', __name__, url_prefix='/index')
 
 @route(bp, '/securities/vnmarket/intraday')
+@gzipped
 def index():
     """List all market.
     ---
@@ -63,5 +64,6 @@ def index():
             {"tradingDate": {"order": "DESC"}},
             {"time": {"order": "ASC"}}
         ]
+
 
     return es.filtered_search(doc_type='market', filters=filters, args=args, sort=sort)

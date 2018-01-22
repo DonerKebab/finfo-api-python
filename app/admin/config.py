@@ -21,6 +21,8 @@ class Config(object):
 
     CACHE_TIMEOUT = 60 * 60  # one hours
 
+    JSONIFY_PRETTYPRINT_REGULAR = False
+
     
 class DevelopmentConfig(Config):
     DEBUG = False
