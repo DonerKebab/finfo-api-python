@@ -7,6 +7,7 @@
 """
 
 from flask import Blueprint, current_app as app, abort
+import datetime
 
 from ..core import AdminError, es, cache
 from . import route, gzipped
@@ -56,6 +57,8 @@ def index():
 
     """
     args = {k: v for k, v in app.market_parser.parse_args().iteritems() if v is not None}
+    if args.get('tradingDate') is None:
+        args['tradingDate'] = datetime.datetime.today().strftime('%Y-%m-%d')
     # get filters
     filters = app.market_parser.get_market_filters(args)
 

@@ -129,6 +129,30 @@ class ElasticSearch(object):
         if '_source' in query_params:
             query['_source'] = query_params['_source'].split(",")
 
-        print(query)
         return self.search(body=query, doc_type=doc_type)
+
+    def publish(self, query, _type, es_index=None):
+        try:
+            docs = []
+            bulk_max = 1000
+
+            for item in query:
+                docs.append({
+                    "index": {
+                        "_index": es_index,
+                        "_type": _type,
+                    }
+                })
+
+                docs.append(item)
+                if len(docs) >= bulk_max:
+                    current_app.extensions['elasticsearch'].bulk(index=es_index, body=docs)
+
+                    docs[:] = []
+
+            if docs:
+                current_app.extensions['elasticsearch'].bulk(index=es_index, body=docs)
+
+        except Exception as e:
+            print("PUBLISH ERROR {} {}".format(type(e), str(e)))
         

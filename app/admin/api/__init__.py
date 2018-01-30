@@ -97,11 +97,8 @@ def gzipped(f):
                 'Content-Encoding' in response.headers):
                 return response
             gzip_buffer = IO()
-            gzip_file = gzip.GzipFile(mode='wb', 
-                                      fileobj=gzip_buffer)
-            gzip_file.write(response.data.replace(' ', ''))
-            # gzip_file.write(response.data)
-            gzip_file.close()
+            with  gzip.GzipFile(mode='wb', fileobj=gzip_buffer) as  gzip_file:
+                gzip_file.write(response.data.replace(' ', ''))
 
             response.data = gzip_buffer.getvalue()
             response.headers['Content-Encoding'] = 'gzip'

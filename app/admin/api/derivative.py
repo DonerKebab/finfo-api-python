@@ -7,6 +7,7 @@
 """
 
 from flask import Blueprint, current_app as app, abort
+import datetime
 
 from ..core import AdminError, es, cache
 from . import route, gzipped
@@ -14,7 +15,7 @@ from . import route, gzipped
 bp = Blueprint('trade', __name__, url_prefix='/trade')
 
 @route(bp, '/derivatives/intraday')
-@gzipped
+# @gzipped
 def index():
     """List all derivative.
     ---
@@ -56,7 +57,8 @@ def index():
 
     """
     args = {k: v for k, v in app.derivative_parser.parse_args().iteritems() if v is not None}
-
+    if args.get('tradingDate') is None:
+        args['tradingDate'] = datetime.datetime.today().strftime('%Y-%m-%d')
     # get filters
     filters = app.derivative_parser.get_derivative_filters(args)
     
@@ -66,4 +68,4 @@ def index():
             {"time": {"order": "ASC"}}
         ]
 
-    return es.filtered_search(doc_type='derivative', filters=filters, args=args, sort=sort)
+    return es.filtered_search(doc_type='deri', filters=filters, args=args, sort=sort)
