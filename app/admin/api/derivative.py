@@ -15,7 +15,7 @@ from . import route, gzipped
 bp = Blueprint('trade', __name__, url_prefix='/trade')
 
 @route(bp, '/derivatives/intraday')
-# @gzipped
+@gzipped
 def index():
     """List all derivative.
     ---

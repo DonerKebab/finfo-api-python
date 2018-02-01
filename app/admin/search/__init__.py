@@ -129,7 +129,7 @@ class ElasticSearch(object):
         if '_source' in query_params:
             query['_source'] = query_params['_source'].split(",")
 
-        return self.search(body=query, doc_type=doc_type)
+        return self.search(body=query, doc_type=doc_type, filter_path=['hits.hits._source', 'hits.total'])
 
     def publish(self, query, _type, es_index=None):
         try:

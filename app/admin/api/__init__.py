@@ -9,7 +9,7 @@ import gzip
 
 from ..core import AdminError, cache, es
 from ..helpers import lookup_url
-from .parsers import MarketRequestParser,DerivativeRequestParser
+from .parsers import MarketRequestParser, DerivativeRequestParser, StockRequestParser
 from .. import factory
 
 
@@ -24,6 +24,7 @@ def create_app(settings_override=None):
 
     app.market_parser = MarketRequestParser()
     app.derivative_parser = DerivativeRequestParser()
+    app.stock_parser = StockRequestParser()
 
     app.url_build_error_handlers.append(external_url_handler)
 
