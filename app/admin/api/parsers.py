@@ -71,7 +71,7 @@ class StockRequestParser(RequestParser):
         super(StockRequestParser, self).__init__(*args, **kwargs)
 
         self.add_argument('tradingDate', type=str)
-        self.add_argument('symbol', type=str) 
+        self.add_argument('symbols', type=str) 
         self.add_argument('floorCode', type=str)
         self.add_argument('limit', type=int, default=2000)
         self.add_argument('_source', type=str)
@@ -85,7 +85,7 @@ class StockRequestParser(RequestParser):
                 filters.append({"term": {"tradingDate": v}})
             elif 'floorCode' == k:
                 filters.append({"term": {"floorCode": v}})
-            elif 'symbol' == k:
+            elif 'symbols' == k:
                 # allow multi symbol requests
                 or_filter = {"or": []}
                 for n in str(v).split(','):

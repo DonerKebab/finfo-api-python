@@ -13,7 +13,7 @@ from datetime import timedelta
 from ..core import AdminError, es, cache
 from . import route, gzipped
 
-bp = Blueprint('stock', __name__, url_prefix='/stock')
+bp = Blueprint('stocks', __name__, url_prefix='/stocks')
 
 @route(bp, '/intraday')
 @gzipped
