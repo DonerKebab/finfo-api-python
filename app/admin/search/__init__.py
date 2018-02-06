@@ -126,9 +126,8 @@ class ElasticSearch(object):
             query["aggs"] = aggs
 
         # source control
-        if '_source' in query_params:
-            query['_source'] = query_params['_source'].split(",")
-
+        if 'fields' in query_params:
+            query['_source'] = query_params['fields'].split(",")
         return self.search(body=query, doc_type=doc_type, filter_path=['hits.hits._source', 'hits.total'])
 
     def publish(self, query, _type, es_index=None):

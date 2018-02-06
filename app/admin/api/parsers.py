@@ -20,7 +20,7 @@ class MarketRequestParser(RequestParser):
         self.add_argument('time', type=str)
         self.add_argument('floorCode', type=str)
         self.add_argument('limit', type=int, default=2000)
-        self.add_argument('_source', type=str)
+        self.add_argument('fields', type=str)
         self.add_argument('page', type=int)
         self.add_argument('indexCode', type=str)
 
@@ -49,7 +49,7 @@ class DerivativeRequestParser(RequestParser):
         self.add_argument('time', type=str)
         self.add_argument('deriCode', type=str)
         self.add_argument('limit', type=int, default=2000)
-        self.add_argument('_source', type=str)
+        self.add_argument('fields', type=str)
         self.add_argument('page', type=int)
 
     def get_derivative_filters(self, args):
@@ -74,7 +74,7 @@ class StockRequestParser(RequestParser):
         self.add_argument('symbols', type=str) 
         self.add_argument('floorCode', type=str)
         self.add_argument('limit', type=int, default=2000)
-        self.add_argument('_source', type=str)
+        self.add_argument('fields', type=str)
         self.add_argument('page', type=int)
 
     def get_stock_filters(self, args):
@@ -85,6 +85,34 @@ class StockRequestParser(RequestParser):
                 filters.append({"term": {"tradingDate": v}})
             elif 'floorCode' == k:
                 filters.append({"term": {"floorCode": v}})
+            elif 'symbols' == k:
+                # allow multi symbol requests
+                or_filter = {"or": []}
+                for n in str(v).split(','):
+                    or_filter["or"].append({"term": {"symbol": n}})
+                filters.append(or_filter)
+        return filters
+
+
+class TradeRequestParser(RequestParser):
+    def __init__(self, *args, **kwargs):
+        super(TradeRequestParser, self).__init__(*args, **kwargs)
+
+        self.add_argument('fromDate', type=str)
+        self.add_argument('symbols', type=str) 
+        self.add_argument('toDate', type=str)
+        self.add_argument('limit', type=int, default=2000)
+        self.add_argument('fields', type=str)
+        self.add_argument('page', type=int)
+
+    def get_trade_filters(self, args):
+
+        filters = []
+        for k, v in args.iteritems():
+            if 'fromDate' == k:
+                filters.append({"range": {"tradingDate": {"gte": v}}})
+            elif 'toDate' == k:
+                filters.append({"range": {"tradingDate": {"lte": v}}})
             elif 'symbols' == k:
                 # allow multi symbol requests
                 or_filter = {"or": []}
