@@ -119,7 +119,7 @@ def supplyDemand():
     """
     args = {k: v for k, v in app.trade_parser.parse_args().iteritems() if v is not None}
     if args.get('fromDate') is None and args.get('toDate') is None :
-        args['tradingDate'] = datetime.datetime.today().strftime('%Y-%m-%d')
+        args['fromDate'] = datetime.datetime.today().strftime('%Y-%m-%d')
     # get filters
     filters = app.trade_parser.get_trade_filters(args)
     sort = [
