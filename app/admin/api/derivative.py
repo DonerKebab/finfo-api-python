@@ -65,7 +65,7 @@ def index():
     sort = [
             {"code": {"order": "ASC"}},
             {"tradingDate": {"order": "DESC"}},
-            {"time": {"order": "ASC"}}
+            {args.get('sortBy', 'time'): {"order": args.get('sortType', 'ASC')}}
         ]
 
     return es.filtered_search(doc_type='deri', filters=filters, args=args, sort=sort)
@@ -120,13 +120,17 @@ def supplyDemand():
     args = {k: v for k, v in app.trade_parser.parse_args().iteritems() if v is not None}
     if args.get('fromDate') is None and args.get('toDate') is None :
         args['fromDate'] = datetime.datetime.today().strftime('%Y-%m-%d')
-    # get filters
-    filters = app.trade_parser.get_trade_filters(args)
+
+    # sorting
     sort = [
             {"symbol": {"order": "ASC"}},
             {"tradingDate": {"order": "DESC"}},
-            {"time": {"order": "ASC"}}
+            {args.get('sortBy', 'time'): {"order": args.get('sortType', 'DESC')}}
         ]
+    
+    # get filters
+    filters = app.trade_parser.get_trade_filters(args)
+    
 
 
     return es.filtered_search(doc_type='trade', filters=filters, args=args, sort=sort)

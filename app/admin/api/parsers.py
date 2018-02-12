@@ -15,7 +15,9 @@ class MarketRequestParser(RequestParser):
 
     def __init__(self, *args, **kwargs):
         super(MarketRequestParser, self).__init__(*args, **kwargs)
-
+        
+        self.add_argument('sortBy', type=str)
+        self.add_argument('sortType', type=str)
         self.add_argument('tradingDate', type=str)  
         self.add_argument('time', type=str)
         self.add_argument('floorCode', type=str)
@@ -44,6 +46,8 @@ class DerivativeRequestParser(RequestParser):
     def __init__(self, *args, **kwargs):
         super(DerivativeRequestParser, self).__init__(*args, **kwargs)
 
+        self.add_argument('sortBy', type=str)
+        self.add_argument('sortType', type=str)
         self.add_argument('code', type=str)
         self.add_argument('tradingDate', type=str) 
         self.add_argument('time', type=str)
@@ -70,6 +74,8 @@ class StockRequestParser(RequestParser):
     def __init__(self, *args, **kwargs):
         super(StockRequestParser, self).__init__(*args, **kwargs)
 
+        self.add_argument('sortBy', type=str)
+        self.add_argument('sortType', type=str)
         self.add_argument('tradingDate', type=str)
         self.add_argument('symbols', type=str) 
         self.add_argument('floorCode', type=str)
@@ -98,6 +104,8 @@ class TradeRequestParser(RequestParser):
     def __init__(self, *args, **kwargs):
         super(TradeRequestParser, self).__init__(*args, **kwargs)
 
+        self.add_argument('sortBy', type=str)
+        self.add_argument('sortType', type=str)
         self.add_argument('fromDate', type=str)
         self.add_argument('symbols', type=str) 
         self.add_argument('toDate', type=str)

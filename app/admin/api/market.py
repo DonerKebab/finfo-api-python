@@ -65,7 +65,7 @@ def index():
     sort = [
             {"floorCode": {"order": "ASC"}},
             {"tradingDate": {"order": "DESC"}},
-            {"time": {"order": "ASC"}}
+            {args.get('sortBy', 'time'): {"order": args.get('sortType', 'ASC')}}
         ]
 
 

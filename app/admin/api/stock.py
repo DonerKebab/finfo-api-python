@@ -73,7 +73,7 @@ def index():
     sort = [
             {"symbol": {"order": "ASC"}},
             {"tradingDate": {"order": "DESC"}},
-            {"time": {"order": "ASC"}}
+            {args.get('sortBy', 'time'): {"order": args.get('sortType', 'ASC')}}
         ]
 
 
@@ -139,7 +139,7 @@ def history():
     sort = [
             {"symbol": {"order": "ASC"}},
             {"tradingDate": {"order": "DESC"}},
-            {"time": {"order": "ASC"}}
+            {args.get('sortBy', 'time'): {"order": args.get('sortType', 'ASC')}}
         ]
 
 
