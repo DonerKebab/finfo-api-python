@@ -71,9 +71,8 @@ def index():
     filters = app.stock_parser.get_stock_filters(args)
 
     sort = [
-            {"symbol": {"order": "ASC"}},
-            {"tradingDate": {"order": "DESC"}},
-            {args.get('sortBy', 'time'): {"order": args.get('sortType', 'ASC')}}
+            {"symbol": {"order": "asc"}},
+            {args.get('sortBy', 'time'): args.get('sortType', 'asc').lower()}
         ]
 
 
@@ -137,11 +136,9 @@ def history():
     filters = app.stock_parser.get_stock_filters(args)
 
     sort = [
-            {"symbol": {"order": "ASC"}},
-            {"tradingDate": {"order": "DESC"}},
-            {args.get('sortBy', 'time'): {"order": args.get('sortType', 'ASC')}}
+            {"symbol": {"order": "asc"}},
+            {args.get('sortBy', 'time'): args.get('sortType', 'asc').lower()}
         ]
-
 
     return es.filtered_search(doc_type='stock', filters=filters, args=args, sort=sort)
 

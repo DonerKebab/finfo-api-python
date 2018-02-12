@@ -63,9 +63,8 @@ def index():
     filters = app.derivative_parser.get_derivative_filters(args)
     
     sort = [
-            {"code": {"order": "ASC"}},
-            {"tradingDate": {"order": "DESC"}},
-            {args.get('sortBy', 'time'): {"order": args.get('sortType', 'ASC')}}
+            {"code": {"order": "asc"}},
+            {args.get('sortBy', 'time'):  args.get('sortType', 'asc').lower()}
         ]
 
     return es.filtered_search(doc_type='deri', filters=filters, args=args, sort=sort)
@@ -123,14 +122,12 @@ def supplyDemand():
 
     # sorting
     sort = [
-            {"symbol": {"order": "ASC"}},
-            {"tradingDate": {"order": "DESC"}},
-            {args.get('sortBy', 'time'): {"order": args.get('sortType', 'DESC')}}
+            {"symbol": {"order": "asc"}},
+            {"tradingDate": {"order": "desc"}},
+            {args.get('sortBy', 'time'): args.get('sortType', 'desc').lower()}
         ]
     
     # get filters
     filters = app.trade_parser.get_trade_filters(args)
-    
-
 
     return es.filtered_search(doc_type='trade', filters=filters, args=args, sort=sort)

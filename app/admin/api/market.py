@@ -63,9 +63,8 @@ def index():
     filters = app.market_parser.get_market_filters(args)
 
     sort = [
-            {"floorCode": {"order": "ASC"}},
-            {"tradingDate": {"order": "DESC"}},
-            {args.get('sortBy', 'time'): {"order": args.get('sortType', 'ASC')}}
+            {"floorCode": {"order": "asc"}},
+            {args.get('sortBy', 'time'): args.get('sortType', 'asc').lower()}
         ]
 
 

@@ -104,7 +104,6 @@ class TradeRequestParser(RequestParser):
     def __init__(self, *args, **kwargs):
         super(TradeRequestParser, self).__init__(*args, **kwargs)
 
-        self.add_argument('sortBy', type=str)
         self.add_argument('sortType', type=str)
         self.add_argument('fromDate', type=str)
         self.add_argument('symbols', type=str) 
